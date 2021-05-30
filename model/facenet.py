@@ -5,7 +5,7 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 
-from model.utilities import load_pb
+from model.utilities import load_pb, l2_normalize
 
 
 # Prewhiten image array
@@ -15,12 +15,6 @@ def prewhiten(x):
     std_adj = np.maximum(std, 1.0 / np.sqrt(x.size))
     y = np.multiply(np.subtract(x, mean), 1 / std_adj)
     return y
-
-
-# Normalize embed array
-def l2_normalize(x, axis=-1, epsilon=1e-10):
-    output = x / np.sqrt(np.maximum(np.sum(np.square(x), axis=axis, keepdims=True), epsilon))
-    return output
 
 
 class Model:
@@ -39,10 +33,12 @@ class Model:
         _img = np.array(_img, dtype='uint8')
         return prewhiten(_img)
 
-    def embedding(self, img: Image):
+    def embedding(self, img: Image, normalize=False):
         _img = self.preprocess(img)
 
         feed_dict = {self.tf_input: [_img], self.tf_placeholder: False}
         embed = self.sess.run(self.tf_output, feed_dict=feed_dict)[0]
 
-        return l2_normalize(embed)
+        if normalize:
+            return l2_normalize(embed)
+        return embed

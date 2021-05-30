@@ -38,17 +38,18 @@ def random_v_data(dataset, distance):
     return dist_list, issame_list
 
 
-def verification(path, model, distance, n_test=100, n_fold=10):
+def verification(path, model, distance, normalize=False, n_test=100, n_fold=10):
     """
     Verification help_func
 
     :param path: path to dataset
     :param model: face model
     :param distance: euclidean or cosine
+    :param normalize: normalize embed
     :param n_test: number of help_func
     :param n_fold: number of fold
     """
-    dataset = load_dataset(path, model)
+    dataset = load_dataset(path, model, normalize)
 
     m_tpr = 0
     m_fpr = 0

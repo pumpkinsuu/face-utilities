@@ -4,6 +4,7 @@ https://github.com/ageitgey/face_recognition
 import face_recognition as fr
 import numpy as np
 from PIL import Image
+from model.utilities import l2_normalize
 
 
 class Model:
@@ -17,6 +18,11 @@ class Model:
         _img = img.convert('RGB').resize(self.input, Image.ANTIALIAS)
         return np.array(_img, dtype='uint8')
 
-    def embedding(self, img: Image):
+    def embedding(self, img: Image, normalize=False):
         _img = self.preprocess(img)
-        return fr.face_encodings(_img, self.face_location)[0]
+
+        embed = fr.face_encodings(_img, self.face_location)[0]
+
+        if normalize:
+            return l2_normalize(embed)
+        return embed

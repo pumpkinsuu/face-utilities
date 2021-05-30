@@ -6,13 +6,14 @@ import pickle
 from help_func.find_threshold import calculate_roc
 
 
-def test(path, model, distance, n_fold=10):
+def lfw(path, model, distance, normalize=False, n_fold=10):
     """
     Verification help_func
 
     :param path: path to lfw bin
     :param model: face model
     :param distance: euclidean or cosine
+    :param normalize: normalize embed
     :param n_fold: number of fold
     """
     bins, issame_list = pickle.load(open(path, 'rb'), encoding='bytes')
@@ -23,7 +24,7 @@ def test(path, model, distance, n_fold=10):
 
     for i in range(total):
         img = Image.open(BytesIO(bins[i]))
-        embeds[i, ...] = model.embedding(img)
+        embeds[i, ...] = model.embedding(img, normalize)
 
     embeds1 = embeds[0::2]
     embeds2 = embeds[1::2]
@@ -37,7 +38,3 @@ def test(path, model, distance, n_fold=10):
     print(f'True p rate: {tpr: .3f}')
     print(f'False p rate: {fpr: .3f}')
     print(f'Threshold: [{min_tol: .3f} -> {max_tol: .3f}]')
-
-
-if __name__ == '__main__':
-    path = input('Enter dataset path: ')

@@ -36,7 +36,7 @@ def random_r_data(dataset, method, metric, n_face=3, n_test=3):
     return dist_list, issame_list
 
 
-def recognition(path, model, method, metric, n_face=3, n_face_t=3, n_test=100, n_fold=10):
+def recognition(path, model, method, metric, normalize=False, n_face=3, n_face_t=3, n_test=100, n_fold=10):
     """
     Recognition help_func
 
@@ -44,12 +44,13 @@ def recognition(path, model, method, metric, n_face=3, n_face_t=3, n_test=100, n
     :param model: face model
     :param method: mean_first, mean_after, min_after
     :param metric: euclidean or cosine
+    :param normalize: normalize embed
     :param n_face: number of known faces
     :param n_face_t: number of help_func faces
     :param n_test: number of help_func
     :param n_fold: number of fold
     """
-    dataset = load_dataset(path, model)
+    dataset = load_dataset(path, model, normalize)
 
     m_tpr = 0
     m_fpr = 0

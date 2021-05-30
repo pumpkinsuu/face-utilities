@@ -5,12 +5,7 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 
-from model.utilities import load_pb
-
-
-# Normalize image array
-def normalize(img):
-    return (img - 127.5) * 0.0078125
+from model.utilities import load_pb, l2_normalize
 
 
 class Model:
@@ -26,8 +21,14 @@ class Model:
     def preprocess(self, img: Image):
         _img = img.convert('RGB').resize(self.input, Image.ANTIALIAS)
         _img = np.array(_img, dtype='uint8')
-        return normalize(_img)
+        _img = (_img - 127.5) * 0.0078125
+        return _img
 
-    def embedding(self, img: Image):
+    def embedding(self, img: Image, normalize=False):
         _img = self.preprocess(img)
-        return self.sess.run(self.tf_output, feed_dict={self.tf_input: [_img]})[0]
+
+        embed = self.sess.run(self.tf_output, feed_dict={self.tf_input: [_img]})[0]
+
+        if normalize:
+            return l2_normalize(embed)
+        return embed
