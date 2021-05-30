@@ -6,14 +6,20 @@ class Detector:
     def __init__(self, model='hog'):
         self.model = model
 
-    def get_box(self, img):
+    def get_face(self, img):
         faces = fr.face_locations(img, model=self.model)
         if not faces:
             raise Exception('No face detected')
         return faces[0]
 
+    def get_box(self, img):
+        top, right, bottom, left = self.get_face(img)
+        top *= top > 0
+        left *= left > 0
+        return top, right, bottom, left
+
     def get_eyes(self, img):
-        face = self.get_box(img)
+        face = self.get_face(img)
         landmark = fr.face_landmarks(
             face_image=img,
             face_locations=[face],
