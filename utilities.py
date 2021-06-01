@@ -60,6 +60,6 @@ def get_model(name):
         return Model()
     if name == 'facenet':
         from models.facenet import Model
-        return Model()
+        return Model('models/pb/facenet.pb')
     from models.mobile import Model
-    return Model()
+    return Model('models/pb/mobile.pb')

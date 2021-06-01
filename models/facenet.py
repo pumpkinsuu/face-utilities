@@ -18,11 +18,11 @@ def prewhiten(x):
 
 
 class Model:
-    def __init__(self):
+    def __init__(self, path):
         self.name = 'Facenet'
         self.input = (160, 160)
         self.output = 512
-        self.graph = load_pb('pb/facenet.pb')
+        self.graph = load_pb(path)
         self.sess = tf.compat.v1.Session(graph=self.graph)
         self.tf_input = self.graph.get_tensor_by_name('input:0')
         self.tf_output = self.graph.get_tensor_by_name('embeddings:0')
