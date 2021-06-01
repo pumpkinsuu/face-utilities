@@ -4,7 +4,7 @@ https://github.com/ageitgey/face_recognition
 import face_recognition as fr
 import numpy as np
 from PIL import Image
-from model.utilities import l2_normalize
+from models.utilities import l2_normalize
 
 
 class Model:

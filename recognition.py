@@ -1,6 +1,6 @@
 import numpy as np
 
-from help_func.utilities import load_dataset
+from utilities import load_dataset
 from help_func.find_threshold import calculate_roc
 
 
@@ -41,7 +41,7 @@ def recognition(path, model, method, metric, normalize=False, n_face=3, n_face_t
     Recognition help_func
 
     :param path: path to dataset
-    :param model: face model
+    :param model: face models
     :param method: mean_first, mean_after, min_after
     :param metric: euclidean or cosine
     :param normalize: normalize embed

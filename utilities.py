@@ -30,7 +30,7 @@ def load_dataset(path, model, normalize=False):
     Load face dataset
 
     :param path: path to dataset
-    :param model: face model
+    :param model: face models
     :param normalize: normalize embed
     """
     files = os.listdir(path)
@@ -46,3 +46,20 @@ def load_dataset(path, model, normalize=False):
         dataset[k].append(embed)
 
     return dataset
+
+
+def get_model(name):
+    """
+    Get face embedding model
+
+    :param name: dlib, facenet or mobile
+    :return: model
+    """
+    if name == 'dlib':
+        from models.dlib import Model
+        return Model()
+    if name == 'facenet':
+        from models.facenet import Model
+        return Model()
+    from models.mobile import Model
+    return Model()

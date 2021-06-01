@@ -5,7 +5,7 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 
-from model.utilities import load_pb, l2_normalize
+from models.utilities import load_pb, l2_normalize
 
 
 # Prewhiten image array
@@ -18,11 +18,11 @@ def prewhiten(x):
 
 
 class Model:
-    def __init__(self, path):
+    def __init__(self):
         self.name = 'Facenet'
         self.input = (160, 160)
         self.output = 512
-        self.graph = load_pb(path)
+        self.graph = load_pb('pb/facenet.pb')
         self.sess = tf.compat.v1.Session(graph=self.graph)
         self.tf_input = self.graph.get_tensor_by_name('input:0')
         self.tf_output = self.graph.get_tensor_by_name('embeddings:0')

@@ -11,7 +11,7 @@ def lfw(path, model, distance, normalize=False, n_fold=10):
     Verification help_func
 
     :param path: path to lfw bin
-    :param model: face model
+    :param model: face models
     :param distance: euclidean or cosine
     :param normalize: normalize embed
     :param n_fold: number of fold

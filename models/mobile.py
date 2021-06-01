@@ -5,15 +5,15 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 
-from model.utilities import load_pb, l2_normalize
+from models.utilities import load_pb, l2_normalize
 
 
 class Model:
-    def __init__(self, path):
+    def __init__(self):
         self.name = 'Mobilefacenet'
         self.input = (112, 112)
         self.output = 128
-        self.graph = load_pb(path)
+        self.graph = load_pb('pb/mobile.pb')
         self.sess = tf.compat.v1.Session(graph=self.graph)
         self.tf_input = self.graph.get_tensor_by_name('img_inputs:0')
         self.tf_output = self.graph.get_tensor_by_name('embeddings:0')

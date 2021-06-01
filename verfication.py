@@ -1,6 +1,6 @@
 import numpy as np
 
-from help_func.utilities import load_dataset
+from utilities import load_dataset
 from help_func.find_threshold import calculate_roc
 
 
@@ -43,7 +43,7 @@ def verification(path, model, distance, normalize=False, n_test=100, n_fold=10):
     Verification help_func
 
     :param path: path to dataset
-    :param model: face model
+    :param model: face models
     :param distance: euclidean or cosine
     :param normalize: normalize embed
     :param n_test: number of help_func
