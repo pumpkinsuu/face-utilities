@@ -103,7 +103,7 @@ def benchmark(path, models, n_face=3, n_face_t=3, n_test=100, n_fold=10):
             acc, tpr, fpr, min_tol, max_tol = test(dataset, method, 'euclidean', n_face, n_face_t, n_test, n_fold)
             df = df.append({
                 'model': model.name,
-                'method': str(method),
+                'method': method.__name__,
                 'metric': 'euclidean',
                 'accuracy': acc,
                 'TPR': tpr,
@@ -115,7 +115,7 @@ def benchmark(path, models, n_face=3, n_face_t=3, n_test=100, n_fold=10):
             acc, tpr, fpr, min_tol, max_tol = test(dataset, method, 'cosine', n_face, n_face_t, n_test, n_fold)
             df = df.append({
                 'model': model.name,
-                'method': str(method),
+                'method': method.__name__,
                 'metric': 'cosine',
                 'accuracy': acc,
                 'TPR': tpr,
