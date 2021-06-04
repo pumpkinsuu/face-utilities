@@ -15,7 +15,7 @@ def load(path, model):
     for i in range(total):
         img = Image.open(BytesIO(bins[i]))
         embeds[i, ...] = model.embedding(img)
-    return issame_list, embeds
+    return np.array(issame_list), embeds
 
 
 def test(issame_list, embeds, distance, n_fold=10):
