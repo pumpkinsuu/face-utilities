@@ -24,11 +24,9 @@ class Model:
         _img = (_img - 127.5) * 0.0078125
         return _img
 
-    def embedding(self, img: Image, normalize=False):
+    def embedding(self, img: Image):
         _img = self.preprocess(img)
 
         embed = self.sess.run(self.tf_output, feed_dict={self.tf_input: [_img]})[0]
 
-        if normalize:
-            return l2_normalize(embed)
-        return embed
+        return l2_normalize(embed)

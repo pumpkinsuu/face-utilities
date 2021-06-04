@@ -2,10 +2,11 @@ import os
 from PIL import Image
 
 
-def mk_dataset(src, dst='dataset'):
+def mk_dataset(detector, src, dst='dataset'):
     """
     Create face dataset
 
+    :param detector: face detector
     :param src: path to images
     :param dst: path to dataset
     """
@@ -13,25 +14,21 @@ def mk_dataset(src, dst='dataset'):
         raise Exception('Destination folder exist')
     os.makedirs(dst)
 
-    from help_func.face_extract import Extractor
-    extractor = Extractor()
-
     folders = os.listdir(src)
 
     for folder in folders:
         for file in os.listdir(f'{src}/{folder}'):
             img = Image.open(f'{src}/{folder}/{file}')
-            img = extractor.extract(img)
+            img = detector.extract(img)
             Image.fromarray(img).save(f'{dst}/{folder}_{file}')
 
 
-def load_dataset(path, model, normalize=False):
+def load_dataset(path, model):
     """
     Load face dataset
 
     :param path: path to dataset
     :param model: face models
-    :param normalize: normalize embed
     """
     files = os.listdir(path)
     dataset = {}
@@ -42,7 +39,7 @@ def load_dataset(path, model, normalize=False):
             dataset[k] = []
 
         img = Image.open(f'{path}/{file}')
-        embed = model.embedding(img, normalize)
+        embed = model.embedding(img)
         dataset[k].append(embed)
 
     return dataset
@@ -63,3 +60,13 @@ def get_model(name):
         return Model('models/pb/facenet.pb')
     from models.mobile import Model
     return Model('models/pb/mobile.pb')
+
+
+def get_detector():
+    """
+    Get face detector
+
+    :return: face detector
+    """
+    from help_func.detector import Detector
+    return Detector()

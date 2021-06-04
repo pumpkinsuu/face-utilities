@@ -7,7 +7,7 @@ def distance(a, b):
     return np.sqrt(np.sum((a - b)**2))
 
 
-class Extractor:
+class Detector:
     def __init__(self):
         self.detector = mtcnn.MTCNN()
 

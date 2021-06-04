@@ -33,12 +33,10 @@ class Model:
         _img = np.array(_img, dtype='uint8')
         return prewhiten(_img)
 
-    def embedding(self, img: Image, normalize=False):
+    def embedding(self, img: Image):
         _img = self.preprocess(img)
 
         feed_dict = {self.tf_input: [_img], self.tf_placeholder: False}
         embed = self.sess.run(self.tf_output, feed_dict=feed_dict)[0]
 
-        if normalize:
-            return l2_normalize(embed)
-        return embed
+        return l2_normalize(embed)

@@ -6,25 +6,29 @@ import pickle
 from help_func.find_threshold import calculate_roc
 
 
-def lfw(path, model, distance, normalize=False, n_fold=10):
-    """
-    Verification help_func
-
-    :param path: path to lfw bin
-    :param model: face models
-    :param distance: euclidean or cosine
-    :param normalize: normalize embed
-    :param n_fold: number of fold
-    """
+def load(path, model):
     bins, issame_list = pickle.load(open(path, 'rb'), encoding='bytes')
 
     total = len(bins)
-    dist_list = np.empty(total)
     embeds = np.empty((total, model.output))
 
     for i in range(total):
         img = Image.open(BytesIO(bins[i]))
-        embeds[i, ...] = model.embedding(img, normalize)
+        embeds[i, ...] = model.embedding(img)
+    return issame_list, embeds
+
+
+def test(issame_list, embeds, distance, n_fold=10):
+    """
+    Verification LFW
+
+    :param issame_list: is same list
+    :param embeds: face embed
+    :param distance: euclidean or cosine
+    :param n_fold: number of fold
+    """
+    total = len(issame_list)
+    dist_list = np.empty(total)
 
     embeds1 = embeds[0::2]
     embeds2 = embeds[1::2]
@@ -33,8 +37,51 @@ def lfw(path, model, distance, normalize=False, n_fold=10):
 
     tpr, fpr, acc, max_tol, min_tol = calculate_roc(dist_list, issame_list, n_fold)
 
-    print(model.name)
-    print(f'Accuracy: {acc: .3f}')
-    print(f'True p rate: {tpr: .3f}')
-    print(f'False p rate: {fpr: .3f}')
-    print(f'Threshold: [{min_tol: .3f} -> {max_tol: .3f}]')
+    return acc, tpr, fpr, min_tol, max_tol
+
+
+def benchmark(path, models, n_fold=10):
+    from scipy.spatial.distance import cosine, euclidean
+    import pandas as pd
+    import time
+
+    df = pd.DataFrame(columns=[
+        'model',
+        'metric',
+        'accuracy',
+        'TPR',
+        'FPR',
+        'min threshold',
+        'max threshold',
+        'embedding time'
+    ])
+
+    for model in models:
+        t = time.time()
+        issame_list, embeds = load(path, model)
+        t = time.time() - t
+
+        acc, tpr, fpr, min_tol, max_tol = test(issame_list, embeds, euclidean, n_fold)
+        df = df.append({
+            'model': model.name,
+            'metric': 'euclidean',
+            'accuracy': acc,
+            'TPR': tpr,
+            'FPR': fpr,
+            'min threshold': min_tol,
+            'max threshold': max_tol,
+            'embedding time': t
+        }, ignore_index=True)
+        acc, tpr, fpr, min_tol, max_tol = test(issame_list, embeds, cosine, n_fold)
+        df = df.append({
+            'model': model.name,
+            'metric': 'cosine',
+            'accuracy': acc,
+            'TPR': tpr,
+            'FPR': fpr,
+            'min threshold': min_tol,
+            'max threshold': max_tol,
+            'embedding time': t
+        }, ignore_index=True)
+
+    return df

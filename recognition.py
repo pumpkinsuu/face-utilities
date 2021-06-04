@@ -1,10 +1,9 @@
 import numpy as np
 
-from utilities import load_dataset
 from help_func.find_threshold import calculate_roc
 
 
-def random_r_data(dataset, method, metric, n_face=3, n_test=3):
+def random_data(dataset, method, metric, n_face=3, n_test=3):
     labels = list(dataset.keys())
     np.random.shuffle(labels)
 
@@ -36,30 +35,28 @@ def random_r_data(dataset, method, metric, n_face=3, n_test=3):
     return dist_list, issame_list
 
 
-def recognition(path, model, method, metric, normalize=False, n_face=3, n_face_t=3, n_test=100, n_fold=10):
+def test(dataset, method, metric, n_face=3, n_face_t=3, n_test=100, n_fold=10):
     """
     Recognition help_func
 
-    :param path: path to dataset
-    :param model: face models
+    :param dataset: dataset contain face embed
     :param method: mean_first, mean_after, min_after
     :param metric: euclidean or cosine
-    :param normalize: normalize embed
     :param n_face: number of known faces
     :param n_face_t: number of help_func faces
     :param n_test: number of help_func
     :param n_fold: number of fold
+    :return m_acc, m_tpr, m_fpr, m_min_tol, m_max_tol
     """
-    dataset = load_dataset(path, model, normalize)
 
     m_tpr = 0
     m_fpr = 0
-    m_accuracy = 0
-    m_max_threshold = 0
-    m_min_threshold = 0
+    m_acc = 0
+    m_max_tol = 0
+    m_min_tol = 0
 
     for i in range(n_test):
-        dist_list, issame_list = random_r_data(
+        dist_list, issame_list = random_data(
             dataset=dataset,
             method=method,
             metric=metric,
@@ -70,12 +67,56 @@ def recognition(path, model, method, metric, normalize=False, n_face=3, n_face_t
         tpr, fpr, accuracy, max_threshold, min_threshold = calculate_roc(dist_list, issame_list, n_fold)
         m_tpr += tpr / n_test
         m_fpr += fpr / n_test
-        m_accuracy += accuracy / n_test
-        m_max_threshold += max_threshold / n_test
-        m_min_threshold += min_threshold / n_test
+        m_acc += accuracy / n_test
+        m_max_tol += max_threshold / n_test
+        m_min_tol += min_threshold / n_test
 
-    print(model.name)
-    print(f'Accuracy: {m_accuracy: .3f}')
-    print(f'True p rate: {m_tpr: .3f}')
-    print(f'False p rate: {m_fpr: .3f}')
-    print(f'Threshold: [{m_min_threshold: .3f} -> {m_max_threshold: .3f}]')
+    return m_acc, m_tpr, m_fpr, m_min_tol, m_max_tol
+
+
+def benchmark(path, models, n_test=100, n_fold=10):
+    from scipy.spatial.distance import cosine, euclidean
+    import pandas as pd
+    import time
+    from utilities import load_dataset
+
+    df = pd.DataFrame(columns=[
+        'model',
+        'metric',
+        'accuracy',
+        'TPR',
+        'FPR',
+        'min threshold',
+        'max threshold',
+        'embedding time'
+    ])
+
+    for model in models:
+        t = time.time()
+        dataset = load_dataset(path, model)
+        t = time.time() - t
+
+        acc, tpr, fpr, min_tol, max_tol = test(dataset, euclidean, n_test, n_fold)
+        df = df.append({
+            'model': model.name,
+            'metric': 'euclidean',
+            'accuracy': acc,
+            'TPR': tpr,
+            'FPR': fpr,
+            'min threshold': min_tol,
+            'max threshold': max_tol,
+            'embedding time': t
+        }, ignore_index=True)
+        acc, tpr, fpr, min_tol, max_tol = test(dataset, cosine, n_test, n_fold)
+        df = df.append({
+            'model': model.name,
+            'metric': 'cosine',
+            'accuracy': acc,
+            'TPR': tpr,
+            'FPR': fpr,
+            'min threshold': min_tol,
+            'max threshold': max_tol,
+            'embedding time': t
+        }, ignore_index=True)
+
+    return df

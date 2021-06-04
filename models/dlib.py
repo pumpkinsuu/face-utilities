@@ -18,11 +18,9 @@ class Model:
         _img = img.convert('RGB').resize(self.input, Image.ANTIALIAS)
         return np.array(_img, dtype='uint8')
 
-    def embedding(self, img: Image, normalize=False):
+    def embedding(self, img: Image):
         _img = self.preprocess(img)
 
         embed = fr.face_encodings(_img, self.face_location)[0]
 
-        if normalize:
-            return l2_normalize(embed)
-        return embed
+        return l2_normalize(embed)
