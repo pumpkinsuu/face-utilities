@@ -29,7 +29,7 @@ class Model:
         self.tf_placeholder = self.graph.get_tensor_by_name('phase_train:0')
 
     def preprocess(self, img: Image):
-        _img = img.convert('RGB').resize(self.input, Image.ANTIALIAS)
+        _img = img.resize(self.input, Image.ANTIALIAS)
         _img = np.array(_img, dtype='uint8')
         return prewhiten(_img)
 

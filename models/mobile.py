@@ -19,7 +19,7 @@ class Model:
         self.tf_output = self.graph.get_tensor_by_name('embeddings:0')
 
     def preprocess(self, img: Image):
-        _img = img.convert('RGB').resize(self.input, Image.ANTIALIAS)
+        _img = img.resize(self.input, Image.ANTIALIAS)
         _img = np.array(_img, dtype='uint8')
         _img = (_img - 127.5) * 0.0078125
         return _img

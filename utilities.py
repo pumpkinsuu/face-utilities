@@ -18,7 +18,7 @@ def mk_dataset(detector, src, dst='dataset'):
 
     for folder in folders:
         for file in os.listdir(f'{src}/{folder}'):
-            img = Image.open(f'{src}/{folder}/{file}')
+            img = Image.open(f'{src}/{folder}/{file}').convert('RGB')
             img = detector.extract(img)
             Image.fromarray(img).save(f'{dst}/{folder}_{file}')
 
@@ -38,7 +38,7 @@ def load_dataset(path, model):
         if k not in dataset:
             dataset[k] = []
 
-        img = Image.open(f'{path}/{file}')
+        img = Image.open(f'{path}/{file}').convert('RGB')
         embed = model.embedding(img)
         dataset[k].append(embed)
 

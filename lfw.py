@@ -13,7 +13,7 @@ def load(path, model):
     embeds = np.empty((total, model.output))
 
     for i in range(total):
-        img = Image.open(BytesIO(bins[i]))
+        img = Image.open(BytesIO(bins[i])).convert('RGB')
         embeds[i, ...] = model.embedding(img)
     return np.array(issame_list), embeds
 

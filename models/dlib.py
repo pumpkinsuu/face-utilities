@@ -15,7 +15,7 @@ class Model:
         self.face_location = [(0, 150, 150, 0)]
 
     def preprocess(self, img: Image):
-        _img = img.convert('RGB').resize(self.input, Image.ANTIALIAS)
+        _img = img.resize(self.input, Image.ANTIALIAS)
         return np.array(_img, dtype='uint8')
 
     def embedding(self, img: Image):
