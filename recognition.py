@@ -74,14 +74,17 @@ def test(dataset, method, metric, n_face=3, n_face_t=3, n_test=100, n_fold=10):
     return m_acc, m_tpr, m_fpr, m_min_tol, m_max_tol
 
 
-def benchmark(path, models, n_test=100, n_fold=10):
-    from scipy.spatial.distance import cosine, euclidean
+def benchmark(path, models, n_face=3, n_face_t=3, n_test=100, n_fold=10):
     import pandas as pd
     import time
     from utilities import load_dataset
+    from help_func.method import min_after, mean_after, mean_first
+
+    methods = [mean_first, mean_after, min_after]
 
     df = pd.DataFrame(columns=[
         'model',
+        'method'
         'metric',
         'accuracy',
         'TPR',
@@ -96,27 +99,28 @@ def benchmark(path, models, n_test=100, n_fold=10):
         dataset = load_dataset(path, model)
         t = time.time() - t
 
-        acc, tpr, fpr, min_tol, max_tol = test(dataset, euclidean, n_test, n_fold)
-        df = df.append({
-            'model': model.name,
-            'metric': 'euclidean',
-            'accuracy': acc,
-            'TPR': tpr,
-            'FPR': fpr,
-            'min threshold': min_tol,
-            'max threshold': max_tol,
-            'embedding time': t
-        }, ignore_index=True)
-        acc, tpr, fpr, min_tol, max_tol = test(dataset, cosine, n_test, n_fold)
-        df = df.append({
-            'model': model.name,
-            'metric': 'cosine',
-            'accuracy': acc,
-            'TPR': tpr,
-            'FPR': fpr,
-            'min threshold': min_tol,
-            'max threshold': max_tol,
-            'embedding time': t
-        }, ignore_index=True)
+        for method in methods:
+            acc, tpr, fpr, min_tol, max_tol = test(dataset, method, 'euclidean', n_face, n_face_t, n_test, n_fold)
+            df = df.append({
+                'model': model.name,
+                'metric': 'euclidean',
+                'accuracy': acc,
+                'TPR': tpr,
+                'FPR': fpr,
+                'min threshold': min_tol,
+                'max threshold': max_tol,
+                'embedding time': t
+            }, ignore_index=True)
+            acc, tpr, fpr, min_tol, max_tol = test(dataset, method, 'cosine', n_face, n_face_t, n_test, n_fold)
+            df = df.append({
+                'model': model.name,
+                'metric': 'cosine',
+                'accuracy': acc,
+                'TPR': tpr,
+                'FPR': fpr,
+                'min threshold': min_tol,
+                'max threshold': max_tol,
+                'embedding time': t
+            }, ignore_index=True)
 
     return df

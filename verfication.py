@@ -34,7 +34,7 @@ def random_data(dataset, distance):
             )
             issame_list.append(False)
 
-    return dist_list, issame_list
+    return np.array(dist_list), np.array(issame_list)
 
 
 def test(dataset, distance, n_test=100, n_fold=10):
