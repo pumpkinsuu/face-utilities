@@ -8,28 +8,28 @@ def random_data(dataset, distance):
     dist_list = []
     issame_list = []
 
-    ids = list(dataset.keys())
-    np.random.shuffle(ids)
-    limit = int(len(ids) / 2)
+    labels = list(dataset.keys())
+    np.random.shuffle(labels)
+    limit = int(len(labels) / 2)
 
-    for i in ids[:limit]:
-        np.random.shuffle(dataset[i])
-        np.random.shuffle(dataset[i + limit])
-        n = int(len(dataset[i]) / 2)
+    for i in range(limit):
+        np.random.shuffle(dataset[labels[i]])
+        np.random.shuffle(dataset[labels[i + limit]])
+        n = int(len(dataset[labels[i]]) / 2)
 
         for j in range(n):
             dist_list.append(
                 distance(
-                    dataset[i][j],
-                    dataset[i][j + n]
+                    dataset[labels[i]][j],
+                    dataset[labels[i]][j + n]
                 )
             )
             issame_list.append(True)
 
             dist_list.append(
                 distance(
-                    dataset[i][j],
-                    dataset[i + limit][j]
+                    dataset[labels[i]][j],
+                    dataset[labels[i + limit]][j]
                 )
             )
             issame_list.append(False)
