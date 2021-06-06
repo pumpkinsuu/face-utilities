@@ -11,8 +11,8 @@ def random_data(dataset, method, metric, n_face=3, n_test=3):
     n = int(total / 2)
     embed_sz = len(dataset[labels[0]][0])
 
-    known_embeds = np.empty((total, n_face, embed_sz))
-    known_sz = total * n_test
+    known_embeds = np.empty((n, n_face, embed_sz))
+    known_sz = n * n_test
     known_labels = np.empty(known_sz, dtype='U25')
     test_embeds = np.empty((known_sz * 2, embed_sz))
 
@@ -77,7 +77,6 @@ def test(dataset, method, metric, n_face=3, n_face_t=3, n_test=100, n_fold=10):
 
 def benchmark(path, models, n_face=3, n_face_t=3, n_test=100, n_fold=10):
     import pandas as pd
-    import time
     from utilities import load_dataset
     from recognition_method import min_after, mean_after, mean_first
 
@@ -85,20 +84,17 @@ def benchmark(path, models, n_face=3, n_face_t=3, n_test=100, n_fold=10):
 
     df = pd.DataFrame(columns=[
         'model',
-        'method'
+        'method',
         'metric',
         'accuracy',
         'TPR',
         'FPR',
         'min threshold',
-        'max threshold',
-        'embedding time'
+        'max threshold'
     ])
 
     for model in models:
-        t = time.time()
         dataset = load_dataset(path, model)
-        t = time.time() - t
 
         for method in methods:
             acc, tpr, fpr, min_tol, max_tol = test(
@@ -118,8 +114,7 @@ def benchmark(path, models, n_face=3, n_face_t=3, n_test=100, n_fold=10):
                 'TPR': tpr,
                 'FPR': fpr,
                 'min threshold': min_tol,
-                'max threshold': max_tol,
-                'embedding time': t
+                'max threshold': max_tol
             }, ignore_index=True)
             acc, tpr, fpr, min_tol, max_tol = test(
                 dataset=dataset,
@@ -138,8 +133,7 @@ def benchmark(path, models, n_face=3, n_face_t=3, n_test=100, n_fold=10):
                 'TPR': tpr,
                 'FPR': fpr,
                 'min threshold': min_tol,
-                'max threshold': max_tol,
-                'embedding time': t
+                'max threshold': max_tol
             }, ignore_index=True)
 
     return df
