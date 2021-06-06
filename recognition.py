@@ -13,7 +13,7 @@ def random_data(dataset, method, metric, n_face=3, n_test=3):
 
     known_embeds = np.empty((total, n_face, embed_sz))
     known_sz = total * n_test
-    known_labels = np.empty(known_sz, dtype=str)
+    known_labels = np.empty(known_sz, dtype='U25')
     test_embeds = np.empty((known_sz * 2, embed_sz))
 
     for i in range(n):
@@ -31,7 +31,7 @@ def random_data(dataset, method, metric, n_face=3, n_test=3):
 
     dist_list, idx_list = method(test_embeds, known_embeds, metric)
     issame_list = np.zeros(len(dist_list), dtype=bool)
-    issame_list[:known_sz] = known_labels[idx_list[:known_sz]] == known_labels
+    issame_list[:known_sz] = labels[idx_list[:known_sz]] == known_labels
 
     return dist_list, issame_list
 

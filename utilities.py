@@ -2,13 +2,14 @@ import os
 from PIL import Image
 
 
-def mk_dataset(detector, src, dst='dataset'):
+def mk_dataset(detector, src, dst='dataset', align=True):
     """
     Create face dataset
 
     :param detector: face detector
     :param src: path to images
     :param dst: path to dataset
+    :param align: aligned face
     """
     if os.path.isdir(dst):
         raise Exception('Destination folder exist')
@@ -19,7 +20,7 @@ def mk_dataset(detector, src, dst='dataset'):
     for folder in folders:
         for file in os.listdir(f'{src}/{folder}'):
             img = Image.open(f'{src}/{folder}/{file}').convert('RGB')
-            img = detector.extract(img)
+            img = detector.extract(img, align=align)
             Image.fromarray(img).save(f'{dst}/{folder}_{file}')
 
 
