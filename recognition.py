@@ -1,6 +1,6 @@
 import numpy as np
 
-from help_func.find_threshold import calculate_roc
+from find_threshold import calculate_roc
 
 
 def random_data(dataset, method, metric, n_face=3, n_test=3):
@@ -12,8 +12,9 @@ def random_data(dataset, method, metric, n_face=3, n_test=3):
     embed_sz = len(dataset[labels[0]][0])
 
     known_embeds = np.empty((total, n_face, embed_sz))
-    known_labels = np.empty(total * n_test)
-    test_embeds = np.empty((total * n_test * 2, embed_sz))
+    known_sz = total * n_test
+    known_labels = np.empty(known_sz, dtype=str)
+    test_embeds = np.empty((known_sz * 2, embed_sz))
 
     for i in range(n):
         np.random.shuffle(dataset[labels[i]])
@@ -30,7 +31,7 @@ def random_data(dataset, method, metric, n_face=3, n_test=3):
 
     dist_list, idx_list = method(test_embeds, known_embeds, metric)
     issame_list = np.zeros(len(dist_list), dtype=bool)
-    issame_list[:len(known_labels)] = known_labels[idx_list] == known_labels
+    issame_list[:known_sz] = known_labels[idx_list[:known_sz]] == known_labels
 
     return dist_list, issame_list
 
@@ -78,7 +79,7 @@ def benchmark(path, models, n_face=3, n_face_t=3, n_test=100, n_fold=10):
     import pandas as pd
     import time
     from utilities import load_dataset
-    from help_func.method import min_after, mean_after, mean_first
+    from recognition_method import min_after, mean_after, mean_first
 
     methods = [mean_first, mean_after, min_after]
 
@@ -100,7 +101,15 @@ def benchmark(path, models, n_face=3, n_face_t=3, n_test=100, n_fold=10):
         t = time.time() - t
 
         for method in methods:
-            acc, tpr, fpr, min_tol, max_tol = test(dataset, method, 'euclidean', n_face, n_face_t, n_test, n_fold)
+            acc, tpr, fpr, min_tol, max_tol = test(
+                dataset=dataset,
+                method=method,
+                metric='euclidean',
+                n_face=n_face,
+                n_face_t=n_face_t,
+                n_test=n_test,
+                n_fold=n_fold
+            )
             df = df.append({
                 'model': model.name,
                 'method': method.__name__,
@@ -112,7 +121,15 @@ def benchmark(path, models, n_face=3, n_face_t=3, n_test=100, n_fold=10):
                 'max threshold': max_tol,
                 'embedding time': t
             }, ignore_index=True)
-            acc, tpr, fpr, min_tol, max_tol = test(dataset, method, 'cosine', n_face, n_face_t, n_test, n_fold)
+            acc, tpr, fpr, min_tol, max_tol = test(
+                dataset=dataset,
+                method=method,
+                metric='cosine',
+                n_face=n_face,
+                n_face_t=n_face_t,
+                n_test=n_test,
+                n_fold=n_fold
+            )
             df = df.append({
                 'model': model.name,
                 'method': method.__name__,

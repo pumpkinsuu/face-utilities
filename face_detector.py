@@ -1,10 +1,7 @@
 import numpy as np
 import mtcnn
 from PIL import Image
-
-
-def distance(a, b):
-    return np.sqrt(np.sum((a - b)**2))
+from scipy.spatial.distance import euclidean
 
 
 class Detector:
@@ -48,9 +45,9 @@ class Detector:
             point_3rd = np.array([left_eye_x, right_eye_y])
             direction = 1
 
-        a = distance(left_eye, point_3rd)
-        b = distance(right_eye, point_3rd)
-        c = distance(right_eye, left_eye)
+        a = euclidean(left_eye, point_3rd)
+        b = euclidean(right_eye, point_3rd)
+        c = euclidean(right_eye, left_eye)
 
         if a != 0 and b != 0:
             cos_a = (b * b + c * c - a * a) / (2 * b * c)

@@ -43,30 +43,3 @@ def load_dataset(path, model):
         dataset[k].append(embed)
 
     return dataset
-
-
-def get_model(name):
-    """
-    Get face embedding model
-
-    :param name: dlib, facenet or mobile
-    :return: model
-    """
-    if name == 'dlib':
-        from models.dlib import Model
-        return Model()
-    if name == 'facenet':
-        from models.facenet import Model
-        return Model('models/pb/facenet.pb')
-    from models.mobile import Model
-    return Model('models/pb/mobile.pb')
-
-
-def get_detector():
-    """
-    Get face detector
-
-    :return: face detector
-    """
-    from help_func.detector import Detector
-    return Detector()

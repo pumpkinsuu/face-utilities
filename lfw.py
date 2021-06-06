@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 import pickle
 
-from help_func.find_threshold import calculate_roc
+from find_threshold import calculate_roc
 
 
 def load(path, model):
@@ -59,7 +59,7 @@ def benchmark(path, models, n_fold=10):
     for model in models:
         t = time.time()
         issame_list, embeds = load(path, model)
-        t = time.time() - t
+        t = (time.time() - t) / len(embeds)
 
         acc, tpr, fpr, min_tol, max_tol = test(issame_list, embeds, euclidean, n_fold)
         df = df.append({

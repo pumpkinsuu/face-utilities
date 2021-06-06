@@ -1,6 +1,6 @@
 import numpy as np
 
-from help_func.find_threshold import calculate_roc
+from find_threshold import calculate_roc
 
 
 # Random data for verification help_func
@@ -70,7 +70,6 @@ def test(dataset, distance, n_test=100, n_fold=10):
 def benchmark(path, models, n_test=100, n_fold=10):
     from scipy.spatial.distance import cosine, euclidean
     import pandas as pd
-    import time
     from utilities import load_dataset
 
     df = pd.DataFrame(columns=[
@@ -80,14 +79,11 @@ def benchmark(path, models, n_test=100, n_fold=10):
         'TPR',
         'FPR',
         'min threshold',
-        'max threshold',
-        'embedding time'
+        'max threshold'
     ])
 
     for model in models:
-        t = time.time()
         dataset = load_dataset(path, model)
-        t = time.time() - t
 
         acc, tpr, fpr, min_tol, max_tol = test(dataset, euclidean, n_test, n_fold)
         df = df.append({
@@ -97,8 +93,7 @@ def benchmark(path, models, n_test=100, n_fold=10):
             'TPR': tpr,
             'FPR': fpr,
             'min threshold': min_tol,
-            'max threshold': max_tol,
-            'embedding time': t
+            'max threshold': max_tol
         }, ignore_index=True)
         acc, tpr, fpr, min_tol, max_tol = test(dataset, cosine, n_test, n_fold)
         df = df.append({
@@ -108,8 +103,7 @@ def benchmark(path, models, n_test=100, n_fold=10):
             'TPR': tpr,
             'FPR': fpr,
             'min threshold': min_tol,
-            'max threshold': max_tol,
-            'embedding time': t
+            'max threshold': max_tol
         }, ignore_index=True)
 
     return df
