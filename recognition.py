@@ -4,7 +4,7 @@ from find_threshold import calculate_roc
 
 
 def random_data(dataset, method, metric, n_face=3, n_test=3):
-    labels = list(dataset.keys())
+    labels = np.array(list(dataset.keys()))
     np.random.shuffle(labels)
 
     total = len(labels)
