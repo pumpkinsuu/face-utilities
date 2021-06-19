@@ -78,9 +78,9 @@ def test(dataset, method, metric, n_face=3, n_face_t=3, n_test=100, n_fold=10):
 def benchmark(path, models, n_face=3, n_face_t=3, n_test=100, n_fold=10):
     import pandas as pd
     from utilities import load_dataset
-    from recognition_method import min_after, mean_after, mean_first
+    from recognition_method import min_later, mean_later, mean_first
 
-    methods = [mean_first, mean_after, min_after]
+    methods = [mean_first, mean_later, min_later]
 
     df = pd.DataFrame(columns=[
         'model',

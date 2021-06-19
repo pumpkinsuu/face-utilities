@@ -21,7 +21,7 @@ def mean_first(test_embeds, known_embeds, metric):
     return np.min(dists, axis=1), np.argmin(dists, axis=1)
 
 
-def mean_after(test_embeds, known_embeds, metric):
+def mean_later(test_embeds, known_embeds, metric):
     """
     Mean distances of all face of same person after
 
@@ -40,7 +40,7 @@ def mean_after(test_embeds, known_embeds, metric):
     return np.min(dists, axis=1), np.argmin(dists, axis=1)
 
 
-def min_after(test_embeds, known_embeds, metric):
+def min_later(test_embeds, known_embeds, metric):
     """
     Min distances of all face of same person after
 

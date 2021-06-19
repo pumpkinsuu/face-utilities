@@ -43,7 +43,6 @@ def test(issame_list, embeds, distance, n_fold=10):
 def benchmark(path, models, n_fold=10):
     from scipy.spatial.distance import cosine, euclidean
     import pandas as pd
-    import time
 
     df = pd.DataFrame(columns=[
         'model',
@@ -52,14 +51,11 @@ def benchmark(path, models, n_fold=10):
         'TPR',
         'FPR',
         'min threshold',
-        'max threshold',
-        'embedding time'
+        'max threshold'
     ])
 
     for model in models:
-        t = time.time()
         issame_list, embeds = load(path, model)
-        t = (time.time() - t) / len(embeds)
 
         acc, tpr, fpr, min_tol, max_tol = test(issame_list, embeds, euclidean, n_fold)
         df = df.append({
@@ -69,8 +65,7 @@ def benchmark(path, models, n_fold=10):
             'TPR': tpr,
             'FPR': fpr,
             'min threshold': min_tol,
-            'max threshold': max_tol,
-            'embedding time': t
+            'max threshold': max_tol
         }, ignore_index=True)
         acc, tpr, fpr, min_tol, max_tol = test(issame_list, embeds, cosine, n_fold)
         df = df.append({
@@ -80,8 +75,7 @@ def benchmark(path, models, n_fold=10):
             'TPR': tpr,
             'FPR': fpr,
             'min threshold': min_tol,
-            'max threshold': max_tol,
-            'embedding time': t
+            'max threshold': max_tol
         }, ignore_index=True)
 
     return df
